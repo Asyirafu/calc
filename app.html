@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black-Scholes-Merton Options Pricing Calculator</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+            color: #3c3c3c;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #6f6f6f;
+        }
+
+        h3 {
+            color: #6f6f6f;
+        }
+
+        a {
+            color: #3c3c3c;
+        }
+
+        p {
+            padding-bottom: 1em;
+            border-bottom: 1px solid #bebebe;
+        }
+
+        span {
+            float: right;
+            width: 40%;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        footer {
+            color: #6f6f6f;
+            text-align: justify;
+            margin: 2em;
+        }
+
+        select {
+            float: right;
+            font-size: medium;
+            width: 40%;
+            overflow: hidden;
+            border: hidden;
+            background-color: #ffffff;
+        }
+
+        input {
+            float: right;
+            font-size: medium;
+            font-style: oblique;
+            width: 40%;
+            overflow: hidden;
+            outline: none;
+            border: hidden;
+            background: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Inaccurate Black-Scholes-Merton Options Pricing Calculator</h1>
+    <h2>hi </h2>
+    <h3>Input Parameters</h3>
+    <hr>
+    <p>Option Type: <select id="a">
+            <option value="c">Call</option>
+            <option value="p">Put</option>
+        </select></p>
+    <p>Underlying Price: <input type="text" id="n" value="307.35"></p>
+    <p>Strike Price: <input type="text" id="o" value="335.00"></p>
+    <p>Days to Expiry: <input type="text" id="s" value="102.0175"></p>
+    <p>Risk-Free Interest Rate (%): <input type="text" id="l" value="2%"></p>
+    <p>Dividend Yield (%): <input type="text" id="c" value="0.000000000000001%"></p>
+    <p>Volatility (%): <input type="text" id="d" value="25%"></p>
+    <p>Market Price: <input type="text" id="p" value="7"></p>
+    <h3>Theoretical Values</h3>
+    <hr>
+    <p>Price: <span class="right" id="i"></span></p>
+    <p>Delta: <span class="right" id="v"></span></p>
+    <p>Theta: <span class="right" id="y"></span></p>
+    <p>Gamma: <span class="right" id="g"></span></p>
+    <p>Vega: <span class="right" id="m"></span></p>
+    <p>Rho: <span class="right" id="w"></span></p>
+    <p>Implied Volatility: <span class="right" id="t"></span></p>
+    <script>
+        function u() {
+            var i = function (a) {
+                var n = function (o) {
+                    var s = .254829592,
+                        l = -.284496736,
+                        c = 1.421413741,
+                        d = -1.453152027,
+                        p = 1.061405429,
+                        h = .3275911,
+                        u = o >= 0 ? 1 : -1;
+                    o = Math.abs(o);
+                    var m = 1 / (1 + h * o),
+                        b = 1 - ((((p * m + d) * m + c) * m + l) * m + s) * m * Math.exp(-o * o);
+                    return u * b
+                };
+                return .5 * (1 + n(a / Math.sqrt(2)))
+            };
+            function e(a, n, o, s, l, c, d) {
+                var p = (Math.log(n / o) + (l - c + .5 * Math.pow(d, 2)) * s) / (d * Math.sqrt(s)), h = p - d * Math.sqrt(s);
+                if (a === "c")
+                    return n * Math.exp(-c * s) * i(p) - o * Math.exp(-l * s) * i(h);
+                if (a === "p")
+                    return o * Math.exp(-l * s) * i(-h) - n * Math.exp(-c * s) * i(-p)
+            }
+            function t(a, n, o, s, l, c, d) {
+                var p = 1e-4, h = 2.5, u = 5, m = 0, b = 1e-4;
+                if (isNaN(n) || isNaN(s) || isNaN(c) || n <= 0 || s <= 0 || c <= 0)
+                    return NaN;
+                for (; u - m > b;)e(a, n, o, s, l, d, (u + m) / 2) > c ? u = (u + m) / 2 : m = (u + m) / 2;
+                var v = (u + m) / 2;
+                return v < p || v > h ? NaN : v
+            }
+            function r(a, n, o, s, l, c, d) {
+                var p = (Math.log(n / o) + (l - c + .5 * Math.pow(d, 2)) * s) / (d * Math.sqrt(s)), h = p - d * Math.sqrt(s), u = Math.exp(-Math.pow(p, 2) / 2) / Math.sqrt(2 * Math.PI), m = i(h), b = e(a, n, o, s, l, c, d), v = 0, y = 0, g = 0, M = 0, w = 0;
+                return a === "c" ? (v = i(p), y = (-(n * d * u) / (2 * Math.sqrt(s)) - l * o * Math.exp(-l * s) * m) / 365, g = u / (n * (d * Math.sqrt(s))), M = .01 * n * Math.sqrt(s) * u, w = .01 * o * s * Math.exp(-l * s) * i(h)) : a === "p" && (v = i(p) - 1, y = (-(n * d * u) / (2 * Math.sqrt(s)) + l * o * Math.exp(-l * s) * (1 - m)) / 365, g = u / (n * (d * Math.sqrt(s))), M = .01 * n * Math.sqrt(s) * u, w = -.01 * o * s * Math.exp(-l * s) * (1 - i(h))),
+                    { theoretical: b, delta: v, theta: y, gamma: g, vega: M, rho: w }
+            }
+            return { impliedVolatility: t, theoreticalValues: r }
+        }
+        function p() {
+            var w = u().impliedVolatility(
+                document.getElementById("a").value,
+                parseFloat(document.getElementById("n").value),
+                parseFloat(document.getElementById("o").value),
+                parseFloat(document.getElementById("s").value) / 365,
+                parseFloat(document.getElementById("l").value) / 100,
+                parseFloat(document.getElementById("p").value),
+                parseFloat(document.getElementById("c").value) / 100);
+            var o = u().theoreticalValues(
+                document.getElementById("a").value,
+                parseFloat(document.getElementById("n").value),
+                parseFloat(document.getElementById("o").value),
+                parseFloat(document.getElementById("s").value) / 365,
+                parseFloat(document.getElementById("l").value) / 100,
+                parseFloat(document.getElementById("c").value) / 100,
+                parseFloat(document.getElementById("d").value) / 100);
+            document.getElementById("i").innerHTML = o.theoretical;
+            document.getElementById("v").innerHTML = o.delta;
+            document.getElementById("y").innerHTML = o.theta;
+            document.getElementById("g").innerHTML = o.gamma;
+            document.getElementById("m").innerHTML = o.vega;
+            document.getElementById("w").innerHTML = o.rho;
+            document.getElementById("t").innerHTML = w * 100 + "%";
+        }
+        document.getElementById("a").addEventListener("change", p);
+        document.getElementById("n").addEventListener("input", p);
+        document.getElementById("o").addEventListener("input", p);
+        document.getElementById("s").addEventListener("input", p);
+        document.getElementById("l").addEventListener("input", p);
+        document.getElementById("c").addEventListener("input", p);
+        document.getElementById("d").addEventListener("input", p);
+        document.getElementById("p").addEventListener("input", p);
+        p();
+    </script>
+    <footer>Risk-Free Interest Rate, Dividend Yield (equities), and Volatility are annualized. The calculation for the
+        Theoretical Values is based on the <a href="https://en.wikipedia.org/wiki/Black_model" target="_blank">Black-76
+            model.</a> The approximation for the of the standard normal cumulative distribution function (CDF) N(x) in
+        the calculation used is specifically the <a href="https://personal.math.ubc.ca/~cbm/aands/frameindex.htm"
+            target="_blank">Abramowitz and Stegun approximation</a> with approximately 10⁻⁷ max absolute error, which is
+        far from the more optimized modern state-of-the-art approximation methods, hence "Inaccurate."</footer>
+</body>
