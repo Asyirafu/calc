@@ -1,4 +1,4 @@
-# Inaccurate Options Pricing Calculator with Greeks
+# Options Pricing Calculator with Greeks
 This project was originally implemented with LibreOffice's Calc (calc is short for calculator, hence the repository name) as a tool to determine European-style call and put option prices and greeks using the Black-Scholes-Merton model. This is a demonstration project and is not intended for real-world financial use.
 
 ## Notes
