@@ -126,9 +126,9 @@
             function r(a, n, o, s, l, c, d) {
                 var p = (Math.log(n / o) + (l - c + .5 * Math.pow(d, 2)) * s) / (d * Math.sqrt(s)), h = p - d * Math.sqrt(s), u = Math.exp(-Math.pow(p, 2) / 2) / Math.sqrt(2 * Math.PI), m = i(h), b = e(a, n, o, s, l, c, d), v = 0, y = 0, g = 0, M = 0, w = 0;
                 return a === "c" ? (v = i(p), y = (-(n * d * u) / (2 * Math.sqrt(s)) - l * o * Math.exp(-l * s) * m) / 365, g = u / (n * (d * Math.sqrt(s))), M = .01 * n * Math.sqrt(s) * u, w = .01 * o * s * Math.exp(-l * s) * i(h)) : a === "p" && (v = i(p) - 1, y = (-(n * d * u) / (2 * Math.sqrt(s)) + l * o * Math.exp(-l * s) * (1 - m)) / 365, g = u / (n * (d * Math.sqrt(s))), M = .01 * n * Math.sqrt(s) * u, w = -.01 * o * s * Math.exp(-l * s) * (1 - i(h))),
-                    { theoretical: b, delta: v, theta: y, gamma: g, vega: M, rho: w }
+                    { theoretical: b.toFixed(7), delta: v.toFixed(7), theta: y.toFixed(7), gamma: g.toFixed(7), vega: M.toFixed(7), rho: w.toFixed(7) }
             }
-            return { impliedVolatility: t, theoreticalValues: r }
+            return { impliedVolatility: t.toFixed(7), theoreticalValues: r.toFixed(7) }
         }
         function p() {
             var w = u().impliedVolatility(
@@ -167,11 +167,11 @@
     </script>
     <footer>Risk-Free Interest Rate, Dividend Yield (equities), and Volatility are annualized. The calculation for the
         Theoretical Values is based on the <a href="https://en.wikipedia.org/wiki/Black_model" target="_blank">Black-76
-            model.</a> The approximation for the of the standard normal cumulative distribution function (CDF) N(x) in
-        the calculation used is specifically the <a href="https://personal.math.ubc.ca/~cbm/aands/frameindex.htm"
-            target="_blank">Abramowitz and Stegun approximation</a> with approximately 10⁻⁷ max absolute error, which is
-        far from the more optimized modern state-of-the-art approximation methods.</footer>
+            model.</a> The approximation for the standard normal cumulative distribution function (CDF) N(x) in
+        the calculation used is the <a href="https://personal.math.ubc.ca/~cbm/aands/frameindex.htm"
+            target="_blank">Abramowitz and Stegun approximation</a> with approximately 10⁻⁷ max absolute error.</footer>
 </body>
+
 
 
 
