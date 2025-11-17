@@ -130,40 +130,52 @@
             }
             return { impliedVolatility: t, theoreticalValues: r }
         }
-        function p() {
-            var w = u().impliedVolatility(
-                document.getElementById("a").value,
-                parseFloat(document.getElementById("n").value),
-                parseFloat(document.getElementById("o").value),
-                parseFloat(document.getElementById("s").value) / 365,
-                parseFloat(document.getElementById("l").value) / 100,
-                parseFloat(document.getElementById("p").value),
-                parseFloat(document.getElementById("c").value) / 100);
-            var o = u().theoreticalValues(
-                document.getElementById("a").value,
-                parseFloat(document.getElementById("n").value),
-                parseFloat(document.getElementById("o").value),
-                parseFloat(document.getElementById("s").value) / 365,
-                parseFloat(document.getElementById("l").value) / 100,
-                parseFloat(document.getElementById("c").value) / 100,
-                parseFloat(document.getElementById("d").value) / 100);
-            document.getElementById("i").innerHTML = o.theoretical.toFixed(7);
-            document.getElementById("v").innerHTML = o.delta.toFixed(7);
-            document.getElementById("y").innerHTML = o.theta.toFixed(7);
-            document.getElementById("g").innerHTML = o.gamma.toFixed(7);
-            document.getElementById("m").innerHTML = o.vega.toFixed(7);
-            document.getElementById("w").innerHTML = o.rho.toFixed(7);
-            document.getElementById("t").innerHTML = w.toFixed(9) * 100 + "%";
+        class o {
+            constructor() {
+                this.elements = {};
+                this.calc = u();
+                this.inputIds = ['a', 'n', 'o', 's', 'l', 'c', 'd', 'p'];
+                this.outputIds = ['i', 'v', 'y', 'g', 'm', 'w', 't'];
+                this.i();
+            }
+            i() {
+                [...this.inputIds, ...this.outputIds].forEach(id => {
+                    this.elements[id] = document.getElementById(id);
+                });
+                this.inputIds.forEach(id => {
+                    this.elements[id].addEventListener(
+                        id === 'a' ? 'change' : 'input',
+                        () => this.c()
+                    );
+                });
+                this.c();
+            }
+            c() {
+                const e = this.elements;
+                const [type, n, o, s, l, c, d, p] = this.g();
+                const iv = this.calc.impliedVolatility(type, n, o, s / 365, l / 100, p, c / 100);
+                const t = this.calc.theoreticalValues(type, n, o, s / 365, l / 100, c / 100, d / 100);
+                this.d(t, iv);
+            }
+            g() {
+                return this.inputIds.map(id => {
+                    const value = this.elements[id].value;
+                    return id === 'a' ? value : parseFloat(value);
+                });
+            }
+            d(t, iv) {
+                const o = [
+                    t.theoretical, t.delta, t.theta,
+                    t.gamma, t.vega, t.rho, iv * 100
+                ];
+                this.outputIds.forEach((id, i) => {
+                    this.elements[id].textContent = i === 6
+                        ? `${o[i].toFixed(6)}%`
+                        : o[i].toFixed(7);
+                });
+            }
         }
-        document.getElementById("a").addEventListener("change", p);
-        document.getElementById("n").addEventListener("input", p);
-        document.getElementById("o").addEventListener("input", p);
-        document.getElementById("s").addEventListener("input", p);
-        document.getElementById("l").addEventListener("input", p);
-        document.getElementById("c").addEventListener("input", p);
-        document.getElementById("d").addEventListener("input", p);
-        document.getElementById("p").addEventListener("input", p);
-        p();
+        new o();
     </script>
     <footer>Risk-Free Interest Rate, Dividend Yield (equities), and Volatility are annualized. The calculation for the
         Theoretical Values is based on the <a href="https://en.wikipedia.org/wiki/Black_model" target="_blank">Black-76
@@ -171,8 +183,3 @@
         the calculation used is the <a href="https://personal.math.ubc.ca/~cbm/aands/frameindex.htm"
             target="_blank">Abramowitz and Stegun approximation</a> with approximately 10⁻⁷ max absolute error.</footer>
 </body>
-
-
-
-
-
